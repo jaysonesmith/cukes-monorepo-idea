@@ -102,11 +102,11 @@ workflows:
       - c21e-javascript
       - protobuf
       - gherkin-go
-        requires:
-          - protobuf
+          requires:
+            - protobuf
       - gherkin-ruby
-        requires:
-          - gherkin-go
+          requires:
+            - gherkin-go
       - gherkin-javascript
-        requires:
-          - gherkin-go
+          requires:
+            - gherkin-go
