@@ -104,9 +104,18 @@ workflows:
       - gherkin-go:
           requires:
             - protobuf
+      - upload-binaries:
+          requires:
+            - gherkin-go
       - gherkin-ruby:
           requires:
-            - gherkin-go
+            - upload-binaries
+      - release-gherkin-ruby:
+          requires:
+            - gherkin-ruby
       - gherkin-javascript:
           requires:
-            - gherkin-go
+            - upload-binaries
+      - release-gherkin-javascript:
+          requires:
+            - gherkin-javascript
