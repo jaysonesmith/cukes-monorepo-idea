@@ -19,7 +19,7 @@ executors:
     working_directory: ~/node-wd
   go:
     docker:
-      - image: circleci/go:latest
+      - image: circleci/golang:latest
     working_directory: ~/go-wd
 
 # Orbs are packages of config that you can use to quickly get started with the CircleCI platform.
