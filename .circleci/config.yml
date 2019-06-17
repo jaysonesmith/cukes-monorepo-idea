@@ -82,16 +82,30 @@ jobs:
     steps:
       - checkout
       - run: echo make gherkin-go
+  upload-binaries:
+    executor: go
+    steps:
+      - run: echo uploading-binaries
   gherkin-ruby:
     executor: ruby
     steps:
       - checkout
       - run: echo make gherkin-ruby
+  release-gherkin-ruby:
+    executor: ruby
+    steps:
+      - checkout
+      - run: echo release-gherkin-ruby
   gherkin-javascript:
     executor: node
     steps:
       - checkout
       - run: echo make gherkin-node
+  release-gherkin-javascript:
+    executor: node
+    steps:
+      - checkout
+      - run: echo release-gherkin-javascript
 
 workflows:
   version: 2
