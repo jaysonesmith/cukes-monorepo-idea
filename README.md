@@ -1,1 +1,1 @@
-"# cukes-monorepo-idea" 
+# cukes-monorepo-idea

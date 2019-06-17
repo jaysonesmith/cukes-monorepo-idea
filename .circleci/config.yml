@@ -1,0 +1,112 @@
+# CircleCI idea config for the Cucumber monorepo
+version: 2.1
+
+# Executors define the environment in which the steps of a job will be run, allowing you to reuse a
+# single executor definition across multiple jobs.
+# We could include as many base images here that we'd like for our needs.
+executors:
+  ruby:
+    docker:
+      - image: circleci/ruby:2.6.3
+    working_directory: ~/ruby-wd
+  java:
+    docker:
+      - image: circleci/openjdk:8-jdk
+    working_directory: ~/java-wd
+  node:
+    docker:
+      - image: circleci/node:latest
+    working_directory: ~/node-wd
+  go:
+    docker:
+      - image: circleci/go:latest
+    working_directory: ~/go-wd
+
+# Orbs are packages of config that you can use to quickly get started with the CircleCI platform.
+# Orbs enable you to share, standardize, and simplify config across your projects.
+orbs:
+  protobuf: izumin5210/protobuf@0.1.0 # https://circleci.com/orbs/registry/orb/izumin5210/protobuf
+
+# A command definition defines a sequence of steps as a map to be executed in a job, enabling you
+# to reuse a single command definition across multiple jobs.
+commands:
+  install-bundle-and-gems:
+    description: "Install gems needed for testing"
+    steps:
+      - restore_cache:
+          keys:
+            - v2-gemfile-{{ checksum "Gemfile.lock" }}
+      - run: gem install bundler
+      - run: bundle install --path vendor/bundle
+      - save_cache:
+          key: v2-gemfile-{{ checksum "Gemfile.lock" }}
+          when: on_success
+          paths:
+            - ~/wd/vendor/bundle
+
+
+# Jobs are the key/main build steps performed for various repos or used by them
+jobs:
+  protobuf:
+    executor: ruby
+    steps:
+      # - protobuf/install #  install protobuf from and orb
+      # - persist_to_workspace:
+      #     root: .
+      #     paths:
+      #         - wd/protobuf # Copy wherever protobuf's files are installed to
+      - run: echo protobuf installed
+  c21e-ruby:
+    executor: ruby
+    steps:
+      - checkout
+      # - install-bundle-and-gems
+      - run: echo bundle install
+      - run: echo make
+  c21e-java:
+    executor: java
+    steps:
+      - checkout
+      # - install-maven
+      - run: echo install-maven
+      - run: echo make
+  c21e-javascript:
+    executor: node
+    steps:
+      - checkout
+      # - install-npm
+      - run: echo install-npm
+      - run: echo make
+  gherkin-go:
+    executor: go
+    steps:
+      - checkout
+      - run: echo make gherkin-go
+  gherkin-ruby:
+    executor: ruby
+    steps:
+      - checkout
+      - run: echo make gherkin-ruby
+  gherkin-javascript:
+    executor: node
+    steps:
+      - checkout
+      - run: echo make gherkin-node
+
+workflows:
+  version: 2
+  build-and-release-monorepo:
+    jobs:
+      - c21e-ruby
+      - c21e-java
+      - c21e-javascript
+      - protobuf
+      - gherkin-go
+        requires:
+          - protobuf
+      - gherkin-ruby
+        requires:
+          - gherkin-go
+      - gherkin-javascript
+        requires:
+          - gherkin-go
